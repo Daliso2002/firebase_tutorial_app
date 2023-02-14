@@ -1,5 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_tutorial_app/screens/home_page.dart';
+import 'package:firebase_tutorial_app/screens/login_screen.dart';
 import 'package:firebase_tutorial_app/services/authntication_sevices.dart';
 import 'package:flutter/material.dart';
 
@@ -52,7 +53,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: ListView(
           children: [
             SizedBox(
-              height: 70,
+              height: 40,
             ),
             Center(
               child: Text(
@@ -61,7 +62,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             SizedBox(
-              height: 50,
+              height: 30,
             ),
             Form(
                 key: _formKey,
@@ -183,12 +184,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             }
                           },
                           child: _isLoading
-                              ? Center(
+                              ? const Center(
                                   child: CircularProgressIndicator(
                                     color: Colors.white,
                                   ),
                                 )
-                              : Text(' Sign Up ')),
+                              : const Text(' Sign Up ')),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Already have an account?'),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => const LoginScreen()));
+                            },
+                            child: Text("Login"))
+                      ],
+                    ),
+                    SizedBox(
+                      height: 30,
                     )
                   ],
                 ))
