@@ -13,6 +13,11 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+
+  List<String> _genderList = ["Female", "Male"];
+  String? _selectedGender;
 
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
@@ -22,7 +27,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       _isLoading = true;
     });
     var result = await AuthServices().signUp(
-        email: _emailController.text, password: _passwordController.text);
+        email: _emailController.text,
+        password: _passwordController.text,
+        gender: _selectedGender!,
+        age: int.parse(_ageController.text),
+        username: _usernameController.text);
     setState(() {
       _isLoading = false;
     });
@@ -96,8 +105,72 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: TextFormField(
+                      controller: _usernameController,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Username is required";
+                        }
+                        return null;
+                      },
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Username',
+                        prefixIcon: Icon(Icons.person),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: TextFormField(
+                      controller: _ageController,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Age is required";
+                        }
+                        return null;
+                      },
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Age',
+                        prefixIcon: Icon(Icons.child_care),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: DropdownButtonFormField<String>(
+                        validator: (value) {
+                          if (value == null) {
+                            return "Select your gender";
+                          } else {
+                            return null;
+                          }
+                        },
+                        items: _genderList
+                            .map((String gender) => DropdownMenuItem(
+                                  child: Text(gender),
+                                  value: gender,
+                                ))
+                            .toList(),
+                        onChanged: (gender) {
+                          setState(() {
+                            _selectedGender = gender;
+                          });
+                        }),
+                  ),
+                  const SizedBox(
+                    height: 50,
                   ),
                   SizedBox(
                     height: 50,
