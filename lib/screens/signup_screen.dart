@@ -1,8 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_tutorial_app/screens/home_page.dart';
 import 'package:firebase_tutorial_app/screens/login_screen.dart';
 import 'package:firebase_tutorial_app/services/authntication_sevices.dart';
+import 'package:firebase_tutorial_app/utilities/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -19,20 +23,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   List<String> _genderList = ["Female", "Male"];
   String? _selectedGender;
+  Uint8List? _selectedImage;
 
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+
+  selectPhoto() async {
+    var image = await pickImage(ImageSource.gallery);
+    setState(() {
+      _selectedImage = image;
+    });
+  }
 
   _signUp() async {
     setState(() {
       _isLoading = true;
     });
     var result = await AuthServices().signUp(
-        email: _emailController.text,
-        password: _passwordController.text,
-        username: _usernameController.text,
-        gender: _selectedGender!,
-        age: int.parse(_ageController.text));
+      email: _emailController.text,
+      password: _passwordController.text,
+      username: _usernameController.text,
+      gender: _selectedGender!,
+      age: int.parse(_ageController.text),
+      image: _selectedImage!,
+    );
     setState(() {
       _isLoading = false;
     });
@@ -52,16 +66,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: SafeArea(
         child: ListView(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
-            Center(
+            const Center(
               child: Text(
                 'Sign Up',
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             Form(
@@ -69,6 +83,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    Stack(
+                      children: [
+                        _selectedImage == null
+                            ? const CircleAvatar(
+                                radius: 60,
+                                backgroundImage: NetworkImage(
+                                    'https://www.personality-insights.com/wp-content/uploads/2017/12/default-profile-pic-e1513291410505.jpg'))
+                            : CircleAvatar(
+                                radius: 60,
+                                backgroundImage: MemoryImage(_selectedImage!)),
+                        Positioned(
+                            bottom: -10,
+                            right: -10,
+                            child: IconButton(
+                                onPressed: selectPhoto,
+                                icon: const Icon(Icons.add_a_photo,
+                                    color: Color.fromARGB(255, 234, 128, 163))))
+                      ],
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: TextFormField(
